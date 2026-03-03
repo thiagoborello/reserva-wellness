@@ -29,7 +29,7 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [bookingStatus, setBookingStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
-  const [errors, setErrors] = useState<{ email?: string; phone?: string }>({});
+  const [errors, setErrors] = useState<{ email?: string }>({});
   const [showModal, setShowModal] = useState(false);
   const [lastBooking, setLastBooking] = useState<{ date: string, time: string } | null>(null);
 
@@ -73,18 +73,12 @@ export default function App() {
     if (!selectedTime) return;
 
     // Validation
-    const newErrors: { email?: string; phone?: string } = {};
+    const newErrors: { email?: string } = {};
     
     // Email validation (specifically checking for Gmail as requested)
     const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
     if (!emailRegex.test(formData.email)) {
       newErrors.email = 'Por favor, ingresa un correo de Gmail válido (@gmail.com)';
-    }
-
-    // Phone validation (at least 8 digits)
-    const phoneRegex = /^\+?[0-9\s-]{8,}$/;
-    if (!phoneRegex.test(formData.phone)) {
-      newErrors.phone = 'Por favor, ingresa un número de teléfono válido (mínimo 8 dígitos)';
     }
 
     if (Object.keys(newErrors).length > 0) {
@@ -325,19 +319,11 @@ export default function App() {
                           required
                           type="tel"
                           value={formData.phone}
-                          onChange={(e) => {
-                            setFormData({ ...formData, phone: e.target.value });
-                            if (errors.phone) setErrors({ ...errors, phone: undefined });
-                          }}
-                          className={`w-full pl-12 pr-4 py-3 bg-white/50 border ${errors.phone ? 'border-red-500' : 'border-brand-500/10'} rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all placeholder:text-brand-500/20`}
+                          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                          className="w-full pl-12 pr-4 py-3 bg-white/50 border border-brand-500/10 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all placeholder:text-brand-500/20"
                           placeholder="Ej: +54 9 11 1234-5678"
                         />
                       </div>
-                      {errors.phone && (
-                        <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
-                          <AlertCircle className="w-3 h-3" /> {errors.phone}
-                        </p>
-                      )}
                     </div>
 
                     <button
