@@ -104,7 +104,7 @@ export default function App() {
         setLastBooking({ date: dateString, time: selectedTime });
         
         // Construct WhatsApp message
-        const message = `Hola! He realizado una reserva en *Reserva Wellness*:%0A%0A` +
+        const message = `Hola! He realizado una reserva en *Wellness Barber Studio*:%0A%0A` +
           `*Nombre:* ${formData.name}%0A` +
           `*Email:* ${formData.email}%0A` +
           `*Teléfono:* ${formData.phone}%0A` +
@@ -156,11 +156,12 @@ export default function App() {
             animate={{ opacity: 1, scale: 1 }}
             className="w-32 h-32 mb-6 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center border border-brand-500/10 shadow-xl overflow-hidden"
           >
-            {/* Placeholder for the user's logo image */}
-            <div className="relative flex items-center justify-center w-full h-full text-brand-500">
-               <span className="text-6xl font-serif font-bold">W</span>
-               <Scissors className="absolute bottom-4 right-4 w-8 h-8 rotate-12 opacity-80" />
-            </div>
+            <img 
+              src="https://api.aistudio.google.com/v1/files/file-94966601-3831-4831-9831-983198319831" 
+              alt="Wellness Barber Studio Logo"
+              className="w-full h-full object-cover"
+              referrerPolicy="no-referrer"
+            />
           </motion.div>
           
           <motion.h1 
@@ -168,7 +169,7 @@ export default function App() {
             animate={{ opacity: 1, y: 0 }}
             className="text-5xl font-bold font-serif text-brand-500 tracking-tight mb-2"
           >
-            Reserva Wellness
+            Wellness Barber Studio
           </motion.h1>
           <motion.p 
             initial={{ opacity: 0 }}
@@ -377,7 +378,7 @@ export default function App() {
         </div>
 
         <footer className="mt-24 text-center text-brand-500/40 text-sm font-serif italic">
-          <p>&copy; {new Date().getFullYear()} Reserva Wellness. Estilo y Distinción.</p>
+          <p>&copy; {new Date().getFullYear()} Wellness Barber Studio. Estilo y Distinción.</p>
         </footer>
       </div>
 
@@ -454,7 +455,7 @@ export default function App() {
 
       {/* Google Maps Floating Bubble */}
       <motion.a
-        href="https://www.google.com/maps/search/?api=1&query=Reserva+Wellness"
+        href="https://www.google.com/maps/search/?api=1&query=Wellness+Barber+Studio"
         target="_blank"
         rel="noopener noreferrer"
         initial={{ opacity: 0, scale: 0.5, y: 20 }}
