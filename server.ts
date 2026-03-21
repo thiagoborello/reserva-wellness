@@ -16,7 +16,7 @@ db.exec(`
   CREATE TABLE IF NOT EXISTS bookings (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     name TEXT NOT NULL,
-    email TEXT NOT NULL,
+    email TEXT DEFAULT '',
     phone TEXT NOT NULL DEFAULT '',
     date TEXT NOT NULL,
     time TEXT NOT NULL,
@@ -63,9 +63,11 @@ async function startServer() {
   app.post("/api/bookings", (req, res) => {
     const { name, email, phone, date, time } = req.body;
     
-    if (!name || !email || !phone || !date || !time) {
-      return res.status(400).json({ error: "All fields are required" });
+    if (!name || !phone || !date || !time) {
+      return res.status(400).json({ error: "All fields except email are required" });
     }
+
+    const finalEmail = email || "";
 
     // Check if slot is already taken
     const checkStmt = db.prepare("SELECT id FROM bookings WHERE date = ? AND time = ?");
@@ -77,7 +79,7 @@ async function startServer() {
 
     const stmt = db.prepare("INSERT INTO bookings (name, email, phone, date, time) VALUES (?, ?, ?, ?, ?)");
     try {
-      stmt.run(name, email, phone, date, time);
+      stmt.run(name, finalEmail, phone, date, time);
       
       // Broadcast the update to all clients
       broadcast({ type: "BOOKING_UPDATED", date });

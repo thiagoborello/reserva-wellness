@@ -13,13 +13,16 @@ import {
   Loader2,
   Scissors,
   Instagram,
-  MapPin
+  MapPin,
+  Sparkles,
+  Star
 } from 'lucide-react';
 import { Booking, TimeSlot } from './types';
 
 const HOURS = [
-  '09:00', '10:00', '11:00', '12:00', '13:00', 
-  '14:00', '15:00', '16:00', '17:00', '18:00'
+  '09:00', '09:45', '10:30', '11:15', '12:00', '12:45',
+  '13:30', '14:15', '15:00', '15:45', '16:30', '17:15',
+  '18:00', '18:45', '19:30', '20:15', '21:00'
 ];
 
 export default function App() {
@@ -28,10 +31,8 @@ export default function App() {
   const [bookedSlots, setBookedSlots] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [bookingStatus, setBookingStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
-  const [formData, setFormData] = useState({ name: '', email: '', phone: '' });
-  const [errors, setErrors] = useState<{ email?: string }>({});
-  const [showModal, setShowModal] = useState(false);
-  const [lastBooking, setLastBooking] = useState<{ date: string, time: string } | null>(null);
+  const [formData, setFormData] = useState({ name: '', phone: '' });
+  const [errors, setErrors] = useState({});
 
   const dateString = selectedDate.toISOString().split('T')[0];
 
@@ -73,14 +74,8 @@ export default function App() {
     if (!selectedTime) return;
 
     // Validation
-    const newErrors: { email?: string } = {};
+    const newErrors = {};
     
-    // Email validation (specifically checking for Gmail as requested)
-    const emailRegex = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-    if (!emailRegex.test(formData.email)) {
-      newErrors.email = 'Por favor, ingresa un correo de Gmail válido (@gmail.com)';
-    }
-
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return;
@@ -101,31 +96,26 @@ export default function App() {
 
       if (res.ok) {
         setBookingStatus('success');
-        setLastBooking({ date: dateString, time: selectedTime });
         
         // Construct WhatsApp message
         const message = `Hola! He realizado una reserva en *Wellness Barber Studio*:%0A%0A` +
           `*Nombre:* ${formData.name}%0A` +
-          `*Email:* ${formData.email}%0A` +
           `*Teléfono:* ${formData.phone}%0A` +
           `*Fecha:* ${new Date(dateString + 'T00:00:00').toLocaleDateString('es-ES', { weekday: 'long', day: 'numeric', month: 'long' })}%0A` +
           `*Hora:* ${selectedTime} hs`;
         
-        const whatsappUrl = `https://wa.me/5492243497070?text=${message}`;
+        const whatsappUrl = `https://wa.me/5492243418025?text=${message}`;
 
         fetchBookings();
         
+        // Redirect directly after a short delay to show success state
         setTimeout(() => {
-          setShowModal(true);
+          window.location.href = whatsappUrl;
+          // Reset form after redirect
           setBookingStatus('idle');
           setSelectedTime(null);
-          setFormData({ name: '', email: '', phone: '' });
-          
-          // Wait 4 seconds before opening WhatsApp so the user can read the message on the card
-          setTimeout(() => {
-            window.open(whatsappUrl, '_blank');
-          }, 4000);
-        }, 1000);
+          setFormData({ name: '', phone: '' });
+        }, 800);
       } else {
         setBookingStatus('error');
       }
@@ -157,7 +147,7 @@ export default function App() {
             className="w-32 h-32 mb-6 rounded-full bg-white/30 backdrop-blur-sm flex items-center justify-center border border-brand-500/10 shadow-xl overflow-hidden"
           >
             <img 
-              src="https://api.aistudio.google.com/v1/files/file-94966601-3831-4831-9831-983198319831" 
+              src="/logowelness.png" 
               alt="Wellness Barber Studio Logo"
               className="w-full h-full object-cover"
               referrerPolicy="no-referrer"
@@ -171,6 +161,14 @@ export default function App() {
           >
             Wellness Barber Studio
           </motion.h1>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ delay: 0.1 }}
+            className="mb-4 px-4 py-1.5 bg-brand-500 text-white text-[10px] font-black uppercase tracking-[0.3em] rounded-full shadow-lg shadow-brand-500/20"
+          >
+            Planes Mensuales Disponibles
+          </motion.div>
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -180,6 +178,87 @@ export default function App() {
             Estilo y elegancia en cada turno.
           </motion.p>
         </header>
+
+        {/* Plan Wellness Section */}
+        <motion.section 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-16"
+        >
+          <div className="text-center mb-10">
+            <h2 className="text-4xl font-serif font-bold text-brand-500 mb-3">Plan Wellness</h2>
+            <p className="text-brand-500/60 font-serif italic text-lg">
+              Planes mensuales para clientes frecuentes. Asegura tu turno todas las semanas con precios especiales. <span className="text-brand-500 font-bold not-italic text-sm ml-2 underline underline-offset-4 decoration-brand-500/30">Cupos limitados.</span>
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+            <div className="bg-white/60 backdrop-blur-md rounded-[40px] p-8 border border-white/40 shadow-xl hover:shadow-2xl transition-all group relative overflow-hidden">
+              <div className="absolute top-6 right-8">
+                <span className="px-3 py-1 bg-brand-500/10 text-brand-500 text-[9px] font-black uppercase tracking-widest rounded-full border border-brand-500/20">
+                  Cupo Limitado
+                </span>
+              </div>
+              <div className="w-14 h-14 bg-brand-500/10 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Sparkles className="w-7 h-7 text-brand-500" />
+              </div>
+              <h3 className="text-2xl font-serif font-bold text-brand-500 mb-2">Plan Wellness Clásico</h3>
+              <p className="text-brand-500/60 text-sm leading-relaxed mb-6">
+                Ideal para mantener tu estilo siempre impecable con visitas semanales programadas.
+              </p>
+              <ul className="space-y-3 mb-8">
+                {['4 Cortes mensuales', 'Turno fijo asegurado', 'Precios especiales'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-brand-500/80 text-sm font-bold">
+                    <div className="w-1.5 h-1.5 rounded-full bg-brand-500" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <a 
+                href="https://wa.me/5492243418025?text=Hola!%20Me%20interesa%20el%20Plan%20Wellness%20Clásico"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full py-4 bg-white border-2 border-brand-500/20 hover:border-brand-500 text-brand-500 font-bold rounded-2xl text-center transition-all"
+              >
+                Consultar Plan
+              </a>
+            </div>
+
+            <div className="bg-brand-500 rounded-[40px] p-8 shadow-xl hover:shadow-2xl transition-all group relative overflow-hidden">
+              <div className="absolute top-6 right-8 z-10">
+                <span className="px-3 py-1 bg-white/20 text-white text-[9px] font-black uppercase tracking-widest rounded-full border border-white/30">
+                  Cupo Limitado
+                </span>
+              </div>
+              <div className="absolute top-0 right-0 p-6 opacity-10">
+                <Star className="w-32 h-32 text-white" />
+              </div>
+              <div className="w-14 h-14 bg-white/20 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <Star className="w-7 h-7 text-white" />
+              </div>
+              <h3 className="text-2xl font-serif font-bold text-white mb-2">Plan Wellness Exclusivo</h3>
+              <p className="text-white/70 text-sm leading-relaxed mb-6">
+                La experiencia completa para quienes buscan distinción y cuidado premium cada semana.
+              </p>
+              <ul className="space-y-3 mb-8">
+                {['4 Cortes + Barba', 'Turno fijo prioritario', 'Tratamientos incluidos'].map((item, i) => (
+                  <li key={i} className="flex items-center gap-3 text-white/90 text-sm font-bold">
+                    <div className="w-1.5 h-1.5 rounded-full bg-white" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <a 
+                href="https://wa.me/5492243418025?text=Hola!%20Me%20interesa%20el%20Plan%20Wellness%20Exclusivo"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-full py-4 bg-white text-brand-500 font-bold rounded-2xl text-center hover:bg-brand-50 transition-all"
+              >
+                Consultar Plan
+              </a>
+            </div>
+          </div>
+        </motion.section>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Calendar & Date Selection */}
@@ -290,29 +369,6 @@ export default function App() {
                     </div>
 
                     <div>
-                      <label className="block text-xs font-bold text-brand-500/60 uppercase tracking-widest mb-2">Correo Electrónico</label>
-                      <div className="relative">
-                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-500/40" />
-                        <input
-                          required
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => {
-                            setFormData({ ...formData, email: e.target.value });
-                            if (errors.email) setErrors({ ...errors, email: undefined });
-                          }}
-                          className={`w-full pl-12 pr-4 py-3 bg-white/50 border ${errors.email ? 'border-red-500' : 'border-brand-500/10'} rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none transition-all placeholder:text-brand-500/20`}
-                          placeholder="juan@gmail.com"
-                        />
-                      </div>
-                      {errors.email && (
-                        <p className="mt-1 text-xs text-red-500 flex items-center gap-1">
-                          <AlertCircle className="w-3 h-3" /> {errors.email}
-                        </p>
-                      )}
-                    </div>
-
-                    <div>
                       <label className="block text-xs font-bold text-brand-500/60 uppercase tracking-widest mb-2">Número de Teléfono</label>
                       <div className="relative">
                         <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-brand-500/40" />
@@ -377,81 +433,11 @@ export default function App() {
           </div>
         </div>
 
-        <footer className="mt-24 text-center text-brand-500/40 text-sm font-serif italic">
+        <footer className="mt-24 pb-12 text-center text-brand-500/40 text-sm font-serif italic">
           <p>&copy; {new Date().getFullYear()} Wellness Barber Studio. Estilo y Distinción.</p>
+          <p className="mt-2 text-[10px] uppercase tracking-widest font-sans font-bold not-italic">General Belgrano, Buenos Aires</p>
         </footer>
       </div>
-
-      {/* Confirmation Modal */}
-      <AnimatePresence>
-        {showModal && lastBooking && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              onClick={() => setShowModal(false)}
-              className="absolute inset-0 bg-brand-700/40 backdrop-blur-md"
-            />
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9, y: 30 }}
-              animate={{ opacity: 1, scale: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9, y: 30 }}
-              className="relative w-full max-w-md bg-bg-beige rounded-[40px] shadow-2xl overflow-hidden border border-white/20"
-            >
-              <div className="bg-brand-500 p-10 text-center text-white">
-                <div className="inline-flex items-center justify-center w-20 h-20 bg-white/10 rounded-full mb-6 border border-white/20">
-                  <CheckCircle2 className="w-10 h-10 text-white" />
-                </div>
-                <h3 className="text-3xl font-bold font-serif mb-2">¡Todo Listo!</h3>
-                <p className="text-brand-100 font-serif italic mb-4">Tu turno ha sido agendado con éxito.</p>
-                <div className="bg-white/10 p-4 rounded-2xl border border-white/20">
-                  <p className="text-sm text-white font-serif leading-relaxed">
-                    Ahora te redireccionaremos a WhatsApp con un mensaje con la información de dicha reserva al barbero Joshua.
-                  </p>
-                </div>
-              </div>
-              
-              <div className="p-10">
-                <div className="space-y-5 mb-10">
-                  <div className="flex items-center gap-5 p-5 bg-white/40 rounded-3xl border border-brand-500/5">
-                    <div className="w-12 h-12 bg-brand-500/10 rounded-2xl flex items-center justify-center">
-                      <CalendarIcon className="w-6 h-6 text-brand-500" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-brand-500/40 font-black uppercase tracking-widest mb-1">Fecha</p>
-                      <p className="text-brand-500 font-serif font-bold text-xl">
-                        {new Date(lastBooking.date + 'T00:00:00').toLocaleDateString('es-ES', { 
-                          weekday: 'long', 
-                          day: 'numeric', 
-                          month: 'long' 
-                        })}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-5 p-5 bg-white/40 rounded-3xl border border-brand-500/5">
-                    <div className="w-12 h-12 bg-brand-500/10 rounded-2xl flex items-center justify-center">
-                      <Clock className="w-6 h-6 text-brand-500" />
-                    </div>
-                    <div>
-                      <p className="text-[10px] text-brand-500/40 font-black uppercase tracking-widest mb-1">Horario</p>
-                      <p className="text-brand-500 font-serif font-bold text-xl">{lastBooking.time} hs</p>
-                    </div>
-                  </div>
-                </div>
-
-                <button
-                  onClick={() => setShowModal(false)}
-                  className="w-full py-5 bg-brand-500 hover:bg-brand-600 text-white font-bold rounded-2xl transition-all active:scale-[0.98] shadow-xl shadow-brand-500/20 text-lg"
-                >
-                  Entendido
-                </button>
-              </div>
-            </motion.div>
-          </div>
-        )}
-      </AnimatePresence>
 
       {/* Google Maps Floating Bubble */}
       <motion.a
@@ -505,6 +491,12 @@ export default function App() {
           Síguenos en Instagram
         </span>
       </motion.a>
+      {/* Developer Credit */}
+      <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 pointer-events-none">
+        <p className="text-[10px] text-brand-500/20 font-bold uppercase tracking-[0.2em] whitespace-nowrap">
+          Desarrollado por Thiago Borello
+        </p>
+      </div>
     </div>
   );
 }
