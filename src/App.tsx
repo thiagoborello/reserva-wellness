@@ -32,7 +32,6 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [bookingStatus, setBookingStatus] = useState<'idle' | 'submitting' | 'success' | 'error'>('idle');
   const [formData, setFormData] = useState({ name: '', phone: '' });
-  const [errors, setErrors] = useState({});
 
   const dateString = selectedDate.toISOString().split('T')[0];
 
@@ -73,15 +72,6 @@ export default function App() {
     e.preventDefault();
     if (!selectedTime) return;
 
-    // Validation
-    const newErrors = {};
-    
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
-    setErrors({});
     setBookingStatus('submitting');
     try {
       const res = await fetch('/api/bookings', {

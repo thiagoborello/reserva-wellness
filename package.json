@@ -1,7 +1,10 @@
 {
-  "name": "react-example",
+  "name": "wellness-barber-studio",
+  "description": "Sistema de reserva de turnos en tiempo real para Wellness Barber Studio, con planes exclusivos y gestión de agenda.",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "author": "Wellness Barber Studio",
+  "license": "MIT",
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
